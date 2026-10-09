@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#172554">
+<meta name="description" content="Поиск удалённой работы и дизайн-заказов в России и за рубежом">
+<link rel="manifest" href="manifest.webmanifest">
+<title>ДизайнРабота — удалёнка</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#64748b;--accent:#2457d6;--line:#dce4f0;--soft:#eaf0ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:#172554;color:#fff;padding:22px 16px 18px;border-radius:0 0 22px 22px}
+h1{font-size:24px;margin:0 0 5px}header p{margin:0;color:#dbeafe;font-size:14px}
+main{max-width:760px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;margin:0 0 13px;box-shadow:0 3px 12px #15264a08}
+h2{font-size:18px;margin:0 0 12px}label{display:block;font-weight:650;font-size:13px;margin:11px 0 5px}
+input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:12px;font:inherit;background:white;color:var(--ink)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+button,.linkbtn{border:0;border-radius:11px;padding:12px 10px;font:600 14px system-ui;cursor:pointer;text-align:center;text-decoration:none;display:block}
+.primary{background:var(--accent);color:#fff}.secondary{background:var(--soft);color:#183b91}.plain{background:#eef2f7;color:#263449}.danger{background:#fff0f0;color:#a11}
+.small{font-size:12px;color:var(--muted)}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:6px 10px;font-size:12px;background:#fff;color:#334155}
+.site{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding:12px 0}
+.site:first-of-type{border-top:0}.site strong{display:block}.site span{font-size:12px;color:var(--muted)}
+.site a{flex-shrink:0;background:var(--soft);color:#183b91;border-radius:9px;padding:9px 11px;text-decoration:none;font-weight:650;font-size:13px}
+.saved-item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:9px;overflow-wrap:anywhere}
+.saved-item a{color:var(--accent)}.saved-item p{margin:5px 0;font-size:14px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 18px 28px}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.btns{grid-template-columns:1fr 1fr}header{padding-top:18px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎨 ДизайнРабота</h1>
+  <p>Удалённые вакансии и заказы · Россия и весь мир</p>
+</header>
+<main>
+  <section class="card">
+    <h2>Настроить поиск</h2>
+    <label for="keywords">Что искать</label>
+    <input id="keywords" value="graphic designer, удалённый графический дизайнер" autocomplete="off">
+    <div class="grid">
+      <div><label for="region">Регион</label>
+        <select id="region"><option value="all">Весь мир / международные</option><option value="ru">Россия</option><option value="eu">Европа</option><option value="nl">Нидерланды</option></select>
+      </div>
+      <div><label for="kind">Тип работы</label>
+        <select id="kind"><option value="both">Вакансии и фриланс</option><option value="job">Постоянная работа</option><option value="freelance">Фриланс / проекты</option></select>
+      </div>
+    </div>
+    <div class="grid">
+      <div><label for="salary">Доход от</label>
+        <select id="salary"><option value="500">€500 в месяц / эквивалент</option><option value="1000">€1 000 в месяц</option><option value="1500">€1 500 в месяц</option><option value="any">Любой / не указан</option></select>
+      </div>
+      <div><label for="language">Язык объявления</label>
+        <select id="language"><option value="en">Английский и русский</option><option value="enonly">Английский</option><option value="ru">Русский</option></select>
+      </div>
+    </div>
+    <label for="exclude">Не показывать (слова через запятую)</label>
+    <input id="exclude" value="cold calling, call center, продажи, оператор">
+    <div class="chips"><span class="chip">✓ Удалённо</span><span class="chip">✓ Без нидерландского</span><span class="chip">Приоритет: переписка без звонков</span></div>
+    <div class="btns">
+      <button class="primary" id="search">Найти предложения</button>
+      <button class="secondary" id="saveSettings">Сохранить настройки</button>
+    </div>
+    <p class="small">Поиск открывает реальные сайты вакансий с подготовленным запросом. Доступность, зарплату и условия проверяй на странице объявления.</p>
+  </section>
+
+  <section class="card" id="results" hidden>
+    <h2>Источники для поиска</h2>
+    <div id="sites"></div>
+  </section>
+
+  <section class="card">
+    <h2>⭐ Мои сохранённые вакансии</h2>
+    <p class="small">Сохраняй сюда ссылку на вакансию, чтобы не потерять её. Данные хранятся в этом браузере на телефоне.</p>
+    <label for="jobTitle">Название / компания</label><input id="jobTitle" placeholder="Например, Remote Graphic Designer">
+    <label for="jobUrl">Ссылка на вакансию</label><input id="jobUrl" type="url" placeholder="https://..." inputmode="url">
+    <label for="jobNote">Заметка (необязательно)</label><textarea id="jobNote" rows="2" placeholder="Зарплата, дедлайн, нужен ли созвон…"></textarea>
+    <button class="primary" id="addJob" style="width:100%;margin-top:10px">Сохранить вакансию</button>
+    <div id="saved"></div>
+  </section>
+
+  <section class="card">
+    <h2>Как искать без звонков</h2>
+    <ul style="padding-left:20px;margin-bottom:0">
+      <li>Ищи слова <b>async, email communication, no meetings, chat</b>.</li>
+      <li>В профиле и отклике напиши, что предпочитаешь письменную коммуникацию.</li>
+      <li>Не плати за доступ к вакансии и не отправляй документы незнакомым работодателям до проверки.</li>
+    </ul>
+  </section>
+</main>
+<footer>ДизайнРабота · первая мобильная версия. Ссылки ведут на внешние площадки; приложение не является их представителем.</footer>
+<script>
+const $ = id => document.getElementById(id);
+const load = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback } catch(e) { return fallback } };
+const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+const enc = s => encodeURIComponent(s.trim());
+function searchData(){
+ const kw=$('keywords').value.trim() || 'graphic designer';
+ const region=$('region').value, kind=$('kind').value, language=$('language').value;
+ let q=kw;
+ if(region==='ru') q += ' Россия';
+ if(region==='eu') q += ' Europe';
+ if(region==='nl') q += ' Netherlands';
+ if(language==='enonly') q += ' English';
+ if(language==='ru') q += ' русский';
+ if(kind==='job') q += ' full-time';
+ if(kind==='freelance') q += ' freelance project';
+ const remote='remote';
+ const sites=[
+  ['hh.ru','Удалённые вакансии в России',`https://hh.ru/search/vacancy?text=${enc(kw)}&schedule=remote&area=113`, 'Вакансии'],
+  ['LinkedIn','Международные вакансии',`https://www.linkedin.com/jobs/search/?keywords=${enc(q)}&f_WT=2`, 'Вакансии'],
+  ['Indeed','Вакансии по миру',`https://www.indeed.com/jobs?q=${enc(q+' remote')}&l=Remote`, 'Вакансии'],
+  ['We Work Remotely','Удалённая работа',`https://weworkremotely.com/remote-jobs/search?term=${enc(q)}`, 'Вакансии'],
+  ['Remote OK','Удалённые вакансии',`https://remoteok.com/remote-${enc(kw.toLowerCase().replace(/\\s+/g,'-'))}-jobs`, 'Вакансии'],
+  ['Wellfound','Стартапы и дизайн',`https://wellfound.com/jobs?role=design&remote=true&query=${enc(q)}`, 'Вакансии'],
+  ['Upwork','Международные дизайн-заказы',`https://www.upwork.com/nx/search/jobs/?q=${enc(kw)}`, 'Фриланс'],
+  ['Kwork','Проекты на русском',`https://kwork.ru/projects?search=${enc(kw)}`, 'Фриланс'],
+  ['Freelance.ru','Заказы на русском',`https://freelance.ru/project/search?query=${enc(kw)}`, 'Фриланс'],
+  ['Behance','Вакансии и творческие проекты',`https://www.behance.net/joblist?search=${enc(kw)}`, 'Дизайн']
+ ];
+ return kind==='job'?sites.filter(s=>s[3]==='Вакансии'):kind==='freelance'?sites.filter(s=>s[3]==='Фриланс'||s[0]==='Behance'):sites;
+}
+function runSearch(){
+ const sites=searchData(); $('results').hidden=false;
+ $('sites').innerHTML=sites.map(s=>`<div class="site"><div><strong>${s[0]}</strong><span>${s[1]}</span></div><a href="${s[2]}" target="_blank" rel="noopener">Открыть ↗</a></div>`).join('');
+ $('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('search').addEventListener('click',runSearch);
+$('saveSettings').addEventListener('click',()=>{
+ save('djf_settings',{keywords:$('keywords').value,region:$('region').value,kind:$('kind').value,salary:$('salary').value,language:$('language').value,exclude:$('exclude').value});
+ $('saveSettings').textContent='Сохранено ✓'; setTimeout(()=>$('saveSettings').textContent='Сохранить настройки',1600);
+});
+const settings=load('djf_settings',null);
+if(settings) for(const k of Object.keys(settings)) if($(k)) $(k).value=settings[k];
+$('addJob').addEventListener('click',()=>{
+ const title=$('jobTitle').value.trim(), url=$('jobUrl').value.trim(), note=$('jobNote').value.trim();
+ if(!title||!/^https?:\\/\\//i.test(url)){alert('Укажи название и полную ссылку, начинающуюся с https://');return}
+ const items=load('djf_jobs',[]); items.unshift({id:Date.now(),title,url,note,added:new Date().toLocaleDateString()}); save('djf_jobs',items);
+ $('jobTitle').value='';$('jobUrl').value='';$('jobNote').value='';renderSaved();
+});
+function renderSaved(){
+ const items=load('djf_jobs',[]);
+ $('saved').innerHTML=items.length?items.map(x=>`<div class="saved-item"><strong>${escapeHtml(x.title)}</strong><p><a href="${escapeHtml(x.url)}" target="_blank" rel="noopener">Открыть вакансию ↗</a></p>${x.note?`<p>${escapeHtml(x.note)}</p>`:''}<span class="small">Добавлено: ${escapeHtml(x.added)}</span><button class="plain" style="margin-top:8px" onclick="removeJob(${x.id})">Удалить</button></div>`).join(''):'<p class="small">Пока ничего не сохранено.</p>';
+}
+function removeJob(id){save('djf_jobs',load('djf_jobs',[]).filter(x=>x.id!==id));renderSaved()}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+renderSaved();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>

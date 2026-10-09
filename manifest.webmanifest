@@ -1,0 +1,11 @@
+{
+  "name": "ДизайнРабота — удалённая работа",
+  "short_name": "ДизайнРабота",
+  "description": "Поиск удалённых вакансий и дизайн-заказов в России и за рубежом",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#172554",
+  "lang": "ru",
+  "icons": []
+}
